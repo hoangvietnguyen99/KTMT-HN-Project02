@@ -1,0 +1,22 @@
+.data
+	#Nhung dong thong bao
+	inputDay: .asciiz "Nhap ngay DAY: "
+	inputMonth: .asciiz "Nhap thang MONTH: "
+	inputYear: .asciiz "Nhap nam YEAR: "
+	menuHeader: .asciiz "-------- Ban hay chon 1 trong cac thao tac duoi day --------"
+	menu1: .asciiz "1. Xuat chuoi TIME theo dinh dang DD/MM/YYYY"
+	menu2: .asciiz "2. Chuyen doi chuoi TIME thanh 1 trong cac dinh dang sau:"
+	menu2a: .asciiz "A. MM/DD/YYYY"
+	menu2b: .asciiz "B. Month DD, YYYY"
+	menu2c: .asciiz "C. DD Month, YYYY"
+	menu3: .asciiz "3. Kiem tra nam trong chuoi TIME co phai la nam nhuan khong"
+	menu4: .asciiz "4. Cho biet ngay vua nhap la ngay thu may trong tuan"
+	menu5: .asciiz "5. Cho biet ngay vua nhap la ngay thu may ke tu ngay 1/1/1"
+	menu6: .asciiz "6. Cho biet can chi cua nam vua nhap. Vi du nam 2019 la Ky Hoi"
+	menu7: .asciiz "7. Cho biet khoang thoi gian giua chuoi TIME_1 va TIME_2"
+	menu8: .asciiz "8. Cho biet 2 nam nhuan gan nhat voi nam trong chuoi TIME"
+	menu9: .asciiz "9. Nhap input tu file input.txt xuat ket qua toan bo cac chuc nang tren ra file output.txt"
+	line: .asciiz "---------------------------------------------------------"
+	luachon: .asciiz "* Lua chon: "
+	ketqua: .asciiz "* Ket qua: "
+.text
