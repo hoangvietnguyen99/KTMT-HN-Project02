@@ -25,3 +25,35 @@
 	month: .word 0
 	year: .word 0
 .text
+xuatMenu:
+	li $v0, 4
+	la $a0, menuHeader
+	syscall
+	la $a0, menu1
+	syscall
+	la $a0, menu2
+	syscall
+	la $a0, menu2a
+	syscall
+	la $a0, menu2b
+	syscall
+	la $a0, menu2c
+	syscall
+	la $a0, menu3
+	syscall
+	la $a0, menu4
+	syscall
+	la $a0, menu5
+	syscall
+	la $a0, menu6
+	syscall
+	la $a0, menu7
+	syscall
+	la $a0, menu8
+	syscall
+	la $a0, menu9
+	syscall
+	la $a0, line
+	syscall
+	la $a0, luachon
+	syscall
