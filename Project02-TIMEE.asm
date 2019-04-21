@@ -58,6 +58,9 @@
 
 	#Luu vao YEAR
 	sw $v0,y
+	
+	#Kiem tra tinh hop le cua time nhap vao
+	#jal kTraHopLe
 
 	#Goi ham xuat menu
 	jal xuat_menu
