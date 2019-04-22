@@ -6,9 +6,9 @@
 	tb5: .asciiz "----------Ban hay chon 1 trong cac thao tac duoi day -----"
 	tb6: .asciiz "\n     1.Xuat chuoi TIME theo dinh dang DD/MM/YYYY"
 	tb7: .asciiz "\n     2.Chuyen doi chuoi TIME thanh mot trong cac dinh dang sau:"
-	tb8: .asciiz "\n     	>1.MM/DD/YYYY"
-	tb9: .asciiz "\n     	>2.Month DD, YYYY"
-	tb10: .asciiz "\n     	>3.DD Month, YYYY"
+	tb8: .asciiz "\n     	A.MM/DD/YYYY"
+	tb9: .asciiz "\n     	B.Month DD, YYYY"
+	tb10: .asciiz "\n     	C.DD Month, YYYY"
 	tb11: .asciiz "\n     3.Kiem tra nam trong chuoi TIME co phai la nam nhuan khong"
 	tb12: .asciiz "\n     4.Cho biet ngay vua nhap la ngay thu may trong tuan"
 	tb13: .asciiz "\n     5.Cho biet ngay vua nhap la ngay thu may ke tu ngay 1/1/1"
@@ -33,6 +33,7 @@
 	tb32: .asciiz "December"
 	tb33: .asciiz " "
 	tb34: .asciiz ", "
+	tb35: .asciiz "1.MM/DD/YYYY\n2.Month DD, YYYY\n3.DD Month, YYYY"
 	d: .word 0
 	m: .word 0
 	y: .word 0
@@ -85,6 +86,7 @@
 	#Thuc thi menu
 	beq $t0,1,func1
 	beq $t0,2,func2
+	j ket_thuc
 	#beq $t0,3,func3
 	#beq $t0,4,func4
 	#beq $t0,5,func5
@@ -195,7 +197,7 @@ func01:
 	sw $ra,($sp)
 
 #Than thu tuc
-#Xuat thong bao ket qua
+	#Xuat thong bao ket qua
 	li $v0,4
 	la $a0,tb20
 	syscall
@@ -250,13 +252,7 @@ func02:
 	
 	#Xuat thong bao cac lua chon
 	li $v0,4
-	la $a0,tb8
-	syscall
-	li $v0,4
-	la $a0,tb9
-	syscall
-	li $v0,4
-	la $a0,tb10
+	la $a0,tb35
 	syscall
 	
 	#Xuat thong bao lua chon
@@ -270,6 +266,11 @@ func02:
 	
 	#luu lai lua chon
 	move $t0,$v0
+
+	#xuat thong bao ket qua
+	li $v0,4
+	la $a0,tb20
+	syscall
 	
 	#xu ly
 	beq $t0,1,a
