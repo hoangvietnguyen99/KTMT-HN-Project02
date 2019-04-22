@@ -8,7 +8,7 @@
 	tb7: .asciiz "\n     2.Chuyen doi chuoi TIME thanh mot trong cac dinh dang sau:"
 	tb8: .asciiz "\n     	A.MM/DD/YYYY"
 	tb9: .asciiz "\n     	B.Month DD, YYYY"
-	tb10: .asciiz "\n     	C.DD Month, YYYY"
+	tb10: .asciiz "\n     	 C.DD Month, YYYY"
 	tb11: .asciiz "\n     3.Kiem tra nam trong chuoi TIME co phai la nam nhuan khong"
 	tb12: .asciiz "\n     4.Cho biet ngay vua nhap la ngay thu may trong tuan"
 	tb13: .asciiz "\n     5.Cho biet ngay vua nhap la ngay thu may ke tu ngay 1/1/1"
@@ -38,6 +38,7 @@
 	m: .word 0
 	y: .word 0
 .text
+main:
 	#xuat tb1
 	li $v0,4
 	la $a0,tb1
