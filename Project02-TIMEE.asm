@@ -8,7 +8,7 @@
 	tb7: .asciiz "\n     2.Chuyen doi chuoi TIME thanh mot trong cac dinh dang sau:"
 	tb8: .asciiz "\n     	A.MM/DD/YYYY"
 	tb9: .asciiz "\n     	B.Month DD, YYYY"
-	tb10: .asciiz "\n     	 C.DD Month, YYYY"
+	tb10: .asciiz "\n     	C.DD Month, YYYY"
 	tb11: .asciiz "\n     3.Kiem tra nam trong chuoi TIME co phai la nam nhuan khong"
 	tb12: .asciiz "\n     4.Cho biet ngay vua nhap la ngay thu may trong tuan"
 	tb13: .asciiz "\n     5.Cho biet ngay vua nhap la ngay thu may ke tu ngay 1/1/1"
@@ -99,10 +99,24 @@ func1:
 	jal func01
 	j ket_thuc
 func2:
-	jal func02
-	j ket_thuc
+	#Xuat thong bao cac lua chon
+	li $v0,4
+	la $a0,tb35
+	syscall
+	
+	#Xuat thong bao lua chon
+	li $v0,4
+	la $a0,tb19
+	syscall
 
-		
+	#nhap lua chon
+	li $v0,5
+	syscall
+	
+	move $a0,$v0
+
+	jal func02
+	j ket_thuc	
 
 ket_thuc:
 	#ket thuc
@@ -251,22 +265,8 @@ func02:
 
 #Than thu tuc
 	
-	#Xuat thong bao cac lua chon
-	li $v0,4
-	la $a0,tb35
-	syscall
-	
-	#Xuat thong bao lua chon
-	li $v0,4
-	la $a0,tb19
-	syscall
-
-	#nhap lua chon
-	li $v0,5
-	syscall
-	
 	#luu lai lua chon
-	move $t0,$v0
+	move $t0,$a0
 
 	#xuat thong bao ket qua
 	li $v0,4
