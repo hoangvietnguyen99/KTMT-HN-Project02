@@ -33,7 +33,8 @@
 	tb32: .asciiz "December"
 	tb33: .asciiz " "
 	tb34: .asciiz ", "
-	tb35: .asciiz "1.MM/DD/YYYY\n2.Month DD, YYYY\n3.DD Month, YYYY"
+	tb35: .asciiz "A.MM/DD/YYYY\nB.Month DD, YYYY\nC.DD Month, YYYY"
+	tb36: .asciiz "\n"
 	d: .word 0
 	m: .word 0
 	y: .word 0
@@ -96,6 +97,11 @@ main:
 	#beq $t0,8,func8
 	#beq $t0,9,func9
 func1:
+	#truyen tham so
+	lw $a1,d
+	lw $a2,m
+	lw $a3,y
+	
 	jal func01
 	j ket_thuc
 func2:
@@ -110,10 +116,26 @@ func2:
 	syscall
 
 	#nhap lua chon
-	li $v0,5
+	li $v0,12
 	syscall
 	
-	move $a0,$v0
+	move $t0,$v0
+	
+	li $v0,4
+	la $a0,tb36
+	syscall
+
+	beq $t0,'A',runfunc2
+	beq $t0,'B',runfunc2
+	beq $t0,'C',runfunc2
+	j func2
+	
+runfunc2:
+	#truyen tham so
+	move $a0,$t0 #tham so type
+	lw $a1,d
+	lw $a2,m
+	lw $a3,y
 
 	jal func02
 	j ket_thuc	
@@ -218,7 +240,7 @@ func01:
 	syscall
 
 	#Xuat DAY
-	lw $a0,d
+	move $a0,$a1
 	li $v0,1
 	syscall
 
@@ -228,7 +250,7 @@ func01:
 	syscall
 
 	#Xuat MONTH
-	lw $a0,m
+	move $a0,$a2
 	li $v0,1
 	syscall
 
@@ -238,7 +260,7 @@ func01:
 	syscall
 
 	#Xuat YEAR
-	lw $a0,y
+	move $a0,$a3
 	li $v0,1
 	syscall	
 
@@ -274,7 +296,7 @@ func02:
 	syscall
 	
 	#xu ly
-	beq $t0,1,a
+	beq $t0,'A',a
 	j xuly1
 
 a:
@@ -289,7 +311,7 @@ a:
 	syscall
 
 	#Xuat DAY
-	lw $a0,d
+	move $a0,$a1
 	li $v0,1
 	syscall
 
@@ -306,19 +328,19 @@ a:
 	j end
 
 xuly1:
-	beq $t0,2,xuly2
-	lw $a0,d
+	beq $t0,'B',xuly2
+	move $a0,$a1
 	li $v0,1
 	syscall
 	
 	li $v0,4
-	la $a0,d
+	la $a0,tb33
 	syscall
 
 	j xuly2
 
 xuly2:
-	lw $t1,m
+	move $t1,$a1
 	beq $t1,1,jan
 	beq $t1,2,feb
 	beq $t1,3,mar
@@ -333,12 +355,12 @@ xuly2:
 	beq $t1,12,dec
 
 xuly3:
-	beq $t0,3,xuly4
+	beq $t0,'C',xuly4
 	li $v0,4
 	la $a0,tb33
 	syscall
 	
-	lw $a0,d
+	move $a0,$a1
 	li $v0,1
 	syscall
 
@@ -349,7 +371,7 @@ xuly4:
 	la $a0,tb34
 	syscall
 
-	lw $a0,y
+	move $a0,$a3
 	li $v0,1
 	syscall
 	
