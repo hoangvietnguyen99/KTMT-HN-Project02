@@ -115,28 +115,7 @@ runfunc2:
 	j ket_thuc
 
 func9:
-	li $v0,13
-	la $a0,Input
-	li $a1,0
-	syscall
-	move $s0,$v0
-	
-	#read
-	li $v0,14
-	move $a0,$s0
-	la $a1,Buffer
-	la $a2,50
-	syscall
-	
-	#print buffer
-	li $v0,4
-	la $a0,Buffer
-	syscall
-
-	#close file
-	li $v0,16
-	move $a0,$s0
-	syscall
+	jal func09
 	
 	j ket_thuc
 
@@ -506,3 +485,37 @@ end:
 	jr $ra
 	
 #-------------------------
+
+#==== Ham chuc nang 9 =====
+func09:
+	addi $sp,$sp,-8
+	sw $ra,($sp)
+	sw $s0,4($sp)
+#than thu tuc
+	li $v0,13
+	la $a0,Input
+	li $a1,0
+	syscall
+	move $s0,$v0
+	
+	#read
+	li $v0,14
+	move $a0,$s0
+	la $a1,Buffer
+	la $a2,50
+	syscall
+	
+	#print buffer
+	li $v0,4
+	la $a0,Buffer
+	syscall
+
+	#close file
+	li $v0,16
+	move $a0,$s0
+	syscall
+#-
+	lw $ra,($sp)
+	lw $s0,4($sp)
+	addi $sp,$sp,4
+	jr $ra
