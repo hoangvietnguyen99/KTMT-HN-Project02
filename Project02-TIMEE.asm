@@ -35,6 +35,9 @@
 	tb34: .asciiz ", "
 	tb35: .asciiz "A.MM/DD/YYYY\nB.Month DD, YYYY\nC.DD Month, YYYY"
 	tb36: .asciiz "\n"
+	Input: .asciiz "D:/Project02/KTMT-HN-Project02/input.txt"
+	Output: .asciiz "output.txt"
+	Buffer: .space 50
 	d: .word 0
 	m: .word 0
 	y: .word 0
@@ -51,7 +54,7 @@ main:
 
 	#Thuc thi menu
 	blt $t0,9,console
-	#beq $t0,9,func9
+	beq $t0,9,func9
 	j ket_thuc
 	
 console:
@@ -109,7 +112,33 @@ runfunc2:
 	lw $a3,y
 
 	jal func02
-	j ket_thuc	
+	j ket_thuc
+
+func9:
+	li $v0,13
+	la $a0,Input
+	li $a1,0
+	syscall
+	move $s0,$v0
+	
+	#read
+	li $v0,14
+	move $a0,$s0
+	la $a1,Buffer
+	la $a2,50
+	syscall
+	
+	#print buffer
+	li $v0,4
+	la $a0,Buffer
+	syscall
+
+	#close file
+	li $v0,16
+	move $a0,$s0
+	syscall
+	
+	j ket_thuc
 
 ket_thuc:
 	#ket thuc
