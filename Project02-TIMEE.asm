@@ -488,9 +488,12 @@ end:
 
 #==== Ham chuc nang 9 =====
 func09:
-	addi $sp,$sp,-8
+	addi $sp,$sp,-16
 	sw $ra,($sp)
 	sw $s0,4($sp)
+	sw $t0,8($sp)
+	sw $t1,12($sp)
+	sw $t2,16($sp)
 #than thu tuc
 	li $v0,13
 	la $a0,Input
@@ -504,10 +507,29 @@ func09:
 	la $a1,Buffer
 	la $a2,50
 	syscall
-	
+
+	la $t0,Buffer
+	li $t1,0
+countChr:  
+	lb $t2,0($t0)
+	beqz $t2, end1 
+	add $t0,$t0,1 
+	add $t1,$t1,1 
+	j countChr
+
+end1:	
 	#print buffer
 	li $v0,4
 	la $a0,Buffer
+	syscall
+
+	li $v0,4
+	la $a0,tb36
+	syscall
+	
+	#print number of char
+	li $v0,1
+	move $a0,$t1
 	syscall
 
 	#close file
@@ -517,5 +539,8 @@ func09:
 #-
 	lw $ra,($sp)
 	lw $s0,4($sp)
-	addi $sp,$sp,4
+	lw $t0,8($sp)
+	lw $t1,12($sp)
+	lw $t2,16($sp)
+	addi $sp,$sp,16
 	jr $ra
