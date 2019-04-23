@@ -40,6 +40,86 @@
 	y: .word 0
 .text
 main:
+	#Kiem tra tinh hop le cua time nhap vao
+	#jal kTraHopLe
+
+	#Goi ham xuat menu
+	jal xuat_menu
+
+	#Luu ket qua tra ve ham xuat_menu (Lua chon cua nguoi dung)
+	move $t0,$v0
+
+	#Thuc thi menu
+	beq $t0,1,func1
+	beq $t0,2,func2
+	j ket_thuc
+	#beq $t0,3,func3
+	#beq $t0,4,func4
+	#beq $t0,5,func5
+	#beq $t0,6,func6
+	#beq $t0,7,func7
+	#beq $t0,8,func8
+	#beq $t0,9,func9
+func1:
+	jal nhap
+
+	#truyen tham so
+	lw $a1,d
+	lw $a2,m
+	lw $a3,y
+	
+	jal func01
+	j ket_thuc
+func2:
+	#Xuat thong bao cac lua chon
+	li $v0,4
+	la $a0,tb35
+	syscall
+	
+	#Xuat thong bao lua chon
+	li $v0,4
+	la $a0,tb19
+	syscall
+
+	#nhap lua chon
+	li $v0,12
+	syscall
+	
+	move $t0,$v0
+	
+	li $v0,4
+	la $a0,tb36
+	syscall
+	
+	beq $t0,'A',runfunc2
+	beq $t0,'B',runfunc2
+	beq $t0,'C',runfunc2
+	j func2
+	
+runfunc2:
+	jal nhap
+	#truyen tham so
+	move $a0,$t0 #tham so type
+	lw $a1,d
+	lw $a2,m
+	lw $a3,y
+
+	jal func02
+	j ket_thuc	
+
+ket_thuc:
+	#ket thuc
+	li $v0,10
+	syscall
+
+#===== Ham nhap =====
+#Dau thu tuc
+nhap:
+#khai bao stack
+	addi $sp,$sp,-4
+	#backup thanh ghi
+	sw $ra,($sp)
+#than thu tuc
 	#xuat tb1
 	li $v0,4
 	la $a0,tb1
@@ -76,74 +156,16 @@ main:
 	#Luu vao YEAR
 	sw $v0,y
 
-	#Kiem tra tinh hop le cua time nhap vao
-	#jal kTraHopLe
+#Cuoi thu tuc
+	#Restore thanh ghi
+	lw $ra,($sp)
 
-	#Goi ham xuat menu
-	jal xuat_menu
+	#xoa stack
+	addi $sp,$sp,4
+	#Tra ve
+	jr $ra
 
-	#Luu ket qua tra ve ham xuat_menu (Lua chon cua nguoi dung)
-	move $t0,$v0
-
-	#Thuc thi menu
-	beq $t0,1,func1
-	beq $t0,2,func2
-	j ket_thuc
-	#beq $t0,3,func3
-	#beq $t0,4,func4
-	#beq $t0,5,func5
-	#beq $t0,6,func6
-	#beq $t0,7,func7
-	#beq $t0,8,func8
-	#beq $t0,9,func9
-func1:
-	#truyen tham so
-	lw $a1,d
-	lw $a2,m
-	lw $a3,y
-	
-	jal func01
-	j ket_thuc
-func2:
-	#Xuat thong bao cac lua chon
-	li $v0,4
-	la $a0,tb35
-	syscall
-	
-	#Xuat thong bao lua chon
-	li $v0,4
-	la $a0,tb19
-	syscall
-
-	#nhap lua chon
-	li $v0,12
-	syscall
-	
-	move $t0,$v0
-	
-	li $v0,4
-	la $a0,tb36
-	syscall
-
-	beq $t0,'A',runfunc2
-	beq $t0,'B',runfunc2
-	beq $t0,'C',runfunc2
-	j func2
-	
-runfunc2:
-	#truyen tham so
-	move $a0,$t0 #tham so type
-	lw $a1,d
-	lw $a2,m
-	lw $a3,y
-
-	jal func02
-	j ket_thuc	
-
-ket_thuc:
-	#ket thuc
-	li $v0,10
-	syscall
+#-------------------------
 
 #===== Ham XuatMenu =====
 #Dau thu tuc
