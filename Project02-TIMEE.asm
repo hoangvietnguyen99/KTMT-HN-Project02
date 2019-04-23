@@ -50,16 +50,20 @@ main:
 	move $t0,$v0
 
 	#Thuc thi menu
+	blt $t0,9,console
+	#beq $t0,9,func9
+	j ket_thuc
+	
+console:
 	beq $t0,1,func1
 	beq $t0,2,func2
-	j ket_thuc
 	#beq $t0,3,func3
 	#beq $t0,4,func4
 	#beq $t0,5,func5
 	#beq $t0,6,func6
 	#beq $t0,7,func7
 	#beq $t0,8,func8
-	#beq $t0,9,func9
+
 func1:
 	jal nhap
 
