@@ -508,6 +508,7 @@ func09:
 	la $a2,50
 	syscall
 
+	#count char
 	la $t0,Buffer
 	li $t1,0
 countChr:  
