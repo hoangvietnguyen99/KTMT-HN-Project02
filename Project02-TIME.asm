@@ -34,8 +34,10 @@
 	str1: .space 3 #chuoi luu thang
 	str2: .space 10	#chuoi luu nam
 	Buffer: .space 50 #bien luu chuoi doc tu file
-	time1: .space 10 #chuoi luu time_1
-	time2: .space 10 #chuoi luu time_2
+	time1: .space 11 #chuoi luu time_1
+	time2: .space 11 #chuoi luu time_2
+	time_1: .space 11 #chuoi luu time_1
+	time_2: .space 11 #chuoi luu time_2
 .text
 main:
 	#Kiem tra tinh hop le cua time nhap vao
@@ -295,13 +297,18 @@ func09:
 	syscall
 	
 	la $t0,Buffer
+
+	move $a0,$t0
+	la $a1,time_1
+	la $a2,time_2
+	jal tach
 	
 	#close file
 	li $v0,16
 	move $a0,$s0
 	syscall
 
-	move $a0,$t0
+	la $a0,time_2
 	jal layTime
 
 	jal func01 #tra ve $v1 = time1
@@ -319,7 +326,48 @@ func09:
 	addi $sp,$sp,60
 	jr $ra
 
-layTime:
+tach: #$a0 = chuoi can tach, $a1 = time_1, $a2 = time_2
+	addi $sp,$sp,-8
+	sw $t0,($sp)
+	sw $ra,4($sp)
+	
+	move $t0,$a2
+	li $a3,0
+	li $a2,10
+	jal strcopy
+
+	addi $a0,$a0,2
+	
+	move $a1,$t0
+	li $a3,11
+	li $a2,21
+	jal strcopy
+	
+	lw $t0,($sp)
+	lw $ra,4($sp)
+	addi $sp,$sp,8
+	jr $ra
+
+strcopy: #$a0 la chuoi nguon, $a1 la chuoi dich, $a2 la do dai chuoi can copy
+	#$a3 la vi tri bat dau
+	addi $sp,$sp,-8
+	sw $t0,($sp)
+	sw $t1,4($sp)
+	move $t1,$a3
+strcopy.turn:
+	lb $t0,($a0)	
+	sb $t0,($a1)	
+	addi $a0,$a0,1	
+	addi $a1,$a1,1	
+	addi $t1,$t1,1	
+	bne $t1,$a2,strcopy.turn	
+	
+	lw $t0,($sp)
+	lw $t1,4($sp)
+	addi $sp,$sp,8
+	jr $ra		
+
+layTime: #$a0 chuoi dau vao
 	addi $sp,$sp,-8
 	sw $t0,($sp)
 	sw $t1,4($sp)
