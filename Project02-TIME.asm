@@ -20,9 +20,10 @@
 	line: .asciiz "---------------------------------------------------------\n"
 	luachon: .asciiz "* Lua chon: "
 	ketqua: .asciiz "* Ket qua: "
-	Input: .asciiz "C:/Users/Chep Phim HD/Documents/MARS_4.0.1/MARS 4.0.1/input.txt"
+	Input: .asciiz "D:/Project02/KTMT-HN-Project02/input.txt"
 	spc: .asciiz " "
 	newline: .asciiz "\n"
+	flash: .asciiz "/"
 	
 	#Cac bien luu tru
 	day: .word 0
@@ -32,6 +33,8 @@
 	str1: .space 10
 	str2: .space 10
 	Buffer: .space 50
+	time1: .space 10
+	time2: .space 10
 .text
 main:
 	#Kiem tra tinh hop le cua time nhap vao
@@ -203,6 +206,69 @@ nhapChuoiTIME:
 	#Tra ve
 	jr $ra
 
+#===== Ham chuc nang 01 =====
+#Dau thu tuc
+func01:
+#khai bao stack
+	addi $sp,$sp,-4
+	#backup thanh ghi
+	sw $ra,($sp)
+
+#Than thu tuc
+	la $a0,time1
+
+	jal strcat
+
+	la $a1,flash
+	jal strcat
+
+	move $a1,$a2
+	jal strcat
+
+	la $a1,flash
+	jal strcat
+
+	move $a1,$a3
+	jal strcat
+
+	la $v1,time1
+
+#Cuoi thu tuc
+	#Restore thanh ghi
+	lw $ra,($sp)
+
+	#xoa stack
+	addi $sp,$sp,4
+	#Tra ve
+	jr $ra
+	
+#-------------------------
+
+#==== Ham ghep chuoi =====
+strcat:
+	addi $sp,$sp,-12
+	sw $t0,($sp)
+	sw $t1,4($sp)
+	sw $t2,8($sp)
+	move $t0,$a0
+	move $t1,$a1
+strcat.turn: 
+    	lb $t2,0($t1)
+    	beqz $t2,strcat_done
+   	sb $t2,0($t0)
+    	addi $t0,$t0,1
+   	addi $t1,$t1,1
+   	j strcat.turn
+
+strcat_done:
+    	sb $zero,0($t0)
+	move $a0,$t0
+	lw $t0,($sp)
+	lw $t1,4($sp)
+	lw $t2,8($sp)
+	addi $sp,$sp,12
+    	jr $ra
+
 #==== Ham chuc nang 9 =====
 func09:
 	addi $sp,$sp,-56
@@ -226,66 +292,18 @@ func09:
 	la $a1,Buffer
 	la $a2,50
 	syscall
-
-	#lay ngay
+	
 	la $t0,Buffer
-	la $t3,str
 	
-	layNgay:  
-	lb $t2,0($t0)
-	beq $t1,2,prelayThang
-	sb $t2,0($t3) 
-	addi $t0,$t0,1 
-	addi $t1,$t1,1
-	addi $t3,$t3,1 
-	j layNgay
-	
-	prelayThang:
-	sb $zero,0($t3)
-	addi $t0,$t0,1
-	addi $t1,$t1,1
-	la $t3,str1
-	j layThang
-	
-	layThang:
-	lb $t2,0($t0)
-	beq $t1,5,prelayNam
-	sb $t2,0($t3) 
-	addi $t0,$t0,1 
-	addi $t1,$t1,1
-	addi $t3,$t3,1 
-	j layThang
-	
-	prelayNam:
-	sb $zero,0($t3)
-	addi $t0,$t0,1
-	addi $t1,$t1,1
-	la $t3,str2
-	j layNam
-	
-	layNam:
-	lb $t2,0($t0)
-	beqz $t2,end1
-	sb $t2,0($t3) 
-	addi $t0,$t0,1 
-	addi $t1,$t1,1
-	addi $t3,$t3,1 
-	j layNam
-
-	end1:
-	sb $zero,0($t3)
-
 	#close file
 	li $v0,16
 	move $a0,$s0
 	syscall
-	
-	la $a0,str
-	jal chuyenSo
 
-	move $a0,$v0
-	li $v0,1
-	syscall
+	move $a0,$t0
+	jal layTime
+
+	jal func01 #tra ve $v1 = time1
 
 #-
 	lw $ra,32($sp)
@@ -295,6 +313,65 @@ func09:
 	lw $t2,48($sp)
 	lw $t3,56($sp)
 	addi $sp,$sp,60
+	jr $ra
+
+layTime:
+	addi $sp,$sp,-8
+	sw $t0,($sp)
+	sw $t1,4($sp)
+	la $a1,str
+	li $t1,0
+	layNgay:  
+	lb $t0,0($a0)
+	beq $t1,2,prelayThang
+	sb $t0,0($a1) 
+	addi $a0,$a0,1 
+	addi $t1,$t1,1
+	addi $a1,$a1,1 
+	j layNgay
+	
+	prelayThang:
+	sb $zero,0($a1)
+	addi $a0,$a0,1
+	addi $t1,$t1,1
+	la $a1,str1
+	j layThang
+	
+	layThang:
+	lb $t0,0($a0)
+	beq $t1,5,prelayNam
+	sb $t0,0($a1) 
+	addi $a0,$a0,1 
+	addi $t1,$t1,1
+	addi $a1,$a1,1 
+	j layThang
+	
+	prelayNam:
+	sb $zero,0($a1)
+	addi $a0,$a0,1
+	la $a1,str2
+	j layNam
+	
+	layNam:
+	lb $t0,0($a0)
+	beqz $t0,layTime.end
+	sb $t0,0($a1) 
+	addi $a0,$a0,1 
+	addi $a1,$a1,1 
+	j layNam
+
+	layTime.end:
+	sb $zero,0($a1)
+
+	la $a1,str
+
+	la $a2,str1
+	
+	la $a3,str2
+	
+	lw $t0,($sp)
+	lw $t1,4($sp)
+	addi $sp,$sp,8
 	jr $ra
 	
 chuyenSo:
@@ -323,7 +400,7 @@ chuyenSo:
 	j countStr
 	
 	chay:
-	beqz $t2,end
+	beqz $t2,chay.end
 	subi $t1,$t1,1
 	lb $t0,($t1)
 	subi $t0,$t0,48
@@ -336,7 +413,7 @@ chuyenSo:
 	
 	j chay
 
-	end:
+	chay.end:
 	move $v0,$s3
 
 	lw $ra,($sp)
@@ -351,7 +428,6 @@ chuyenSo:
 	jr $ra
 
 kiemtraTIMEhople:
-
 
 xuatTIME:
 
