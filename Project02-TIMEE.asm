@@ -35,9 +35,10 @@
 	tb34: .asciiz ", "
 	tb35: .asciiz "A.MM/DD/YYYY\nB.Month DD, YYYY\nC.DD Month, YYYY"
 	tb36: .asciiz "\n"
-	Input: .asciiz "D:/Project02/KTMT-HN-Project02/input.txt"
+	Input: .asciiz "D:/ITUS/KTMT-HN-Project02/input.txt"
 	Output: .asciiz "output.txt"
 	Buffer: .space 50
+	str: .space 50
 	d: .word 0
 	m: .word 0
 	y: .word 0
@@ -488,12 +489,13 @@ end:
 
 #==== Ham chuc nang 9 =====
 func09:
-	addi $sp,$sp,-16
+	addi $sp,$sp,-20
 	sw $ra,($sp)
 	sw $s0,4($sp)
 	sw $t0,8($sp)
 	sw $t1,12($sp)
 	sw $t2,16($sp)
+	sw $t3,20($sp)
 #than thu tuc
 	li $v0,13
 	la $a0,Input
@@ -510,27 +512,25 @@ func09:
 
 	#count char
 	la $t0,Buffer
-	li $t1,0
+	la $t3,str
 countChr:  
 	lb $t2,0($t0)
-	beqz $t2, end1 
-	add $t0,$t0,1 
-	add $t1,$t1,1 
+	beq $t1,2, end1
+	sb $t2,0($t3) 
+	addi $t0,$t0,1 
+	addi $t1,$t1,1
+	addi $t3,$t3,1 
 	j countChr
 
-end1:	
+end1:
+	sb $zero,0($t3)
 	#print buffer
 	li $v0,4
-	la $a0,Buffer
+	la $a0,str
 	syscall
 
 	li $v0,4
 	la $a0,tb36
-	syscall
-	
-	#print number of char
-	li $v0,1
-	move $a0,$t1
 	syscall
 
 	#close file
@@ -543,5 +543,6 @@ end1:
 	lw $t0,8($sp)
 	lw $t1,12($sp)
 	lw $t2,16($sp)
-	addi $sp,$sp,16
+	lw $t3,20($sp)
+	addi $sp,$sp,20
 	jr $ra
