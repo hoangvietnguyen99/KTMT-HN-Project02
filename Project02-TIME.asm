@@ -312,10 +312,10 @@ chay:
 	beqz $t2,end
 	subi $t1,$t1,1
 	lb $t0,($t1)
-	subi $t0,$t0,30
+	subi $t0,$t0,48
 	mult $t0,$s0
 	mflo $s1
-	sub $s3,$s3,$s1
+	add $s3,$s3,$s1
 	subi $t2,$t2,1
 	mult $s0,$s2
 	mflo $s0
