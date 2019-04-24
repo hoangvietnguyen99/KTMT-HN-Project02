@@ -211,7 +211,7 @@ nhapChuoiTIME:
 
 #===== Ham chuc nang 01 =====
 #Dau thu tuc
-func01:
+xuatTIME:
 #khai bao stack
 	addi $sp,$sp,-4
 	#backup thanh ghi
@@ -220,7 +220,7 @@ func01:
 #Than thu tuc
 	la $a0,time1
 
-	jal strcat
+	jal strcat #tham so dau vao $a0, $a1
 
 	la $a1,flash
 	jal strcat
@@ -248,7 +248,7 @@ func01:
 #-------------------------
 
 #==== Ham ghep chuoi =====
-strcat:
+strcat: #tham so dau vao $a0, $a1
 	addi $sp,$sp,-12
 	sw $t0,($sp)
 	sw $t1,4($sp)
@@ -309,9 +309,9 @@ func09:
 	syscall
 
 	la $a0,time_2
-	jal layTime
+	jal layTime #$a0 = day, $a1 = month, $a2 = year
 
-	jal func01 #tra ve $v1 = time1
+	jal xuatTIME #tra ve $v1 = time1
 
 	move $a3,$v1
 	jal ghiFile
@@ -526,8 +526,6 @@ countStr:
 	jr $ra
 
 kiemtraTIMEhople:
-
-xuatTIME:
 
 chuyendoiTIME:
 
