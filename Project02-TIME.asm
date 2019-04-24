@@ -67,7 +67,7 @@ main:
 	jal nhapChuoiTIME
 	
 	func9:
-	jal func09
+	jal xulyFile
 	j ketthuc
 	
 	ketthuc:
@@ -273,7 +273,7 @@ strcat_done:
     	jr $ra
 
 #==== Ham chuc nang 9 =====
-func09:
+xulyFile:
 	addi $sp,$sp,-56
 	sw $ra,32($sp)
 	sw $s0,36($sp)
@@ -425,6 +425,8 @@ layTime: #$a0 chuoi dau vao
 	lw $t1,4($sp)
 	addi $sp,$sp,8
 	jr $ra
+
+chuyenChu:
 	
 chuyenSo: #$a0 la chuoi nhap vao
 	addi $sp,$sp,-32
@@ -540,5 +542,3 @@ CanChicuaNam:
 KhoangThoiGiangiuaHaiChuoiTIME:
 
 HaiNamNhuangannhat:
-
-xulyFile:
