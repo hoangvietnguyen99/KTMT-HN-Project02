@@ -21,20 +21,21 @@
 	luachon: .asciiz "* Lua chon: "
 	ketqua: .asciiz "* Ket qua: "
 	Input: .asciiz "D:/Project02/KTMT-HN-Project02/input.txt"
+	Output: .asciiz "D:/Project02/KTMT-HN-Project02/output.txt"
 	spc: .asciiz " "
 	newline: .asciiz "\n"
 	flash: .asciiz "/"
 	
 	#Cac bien luu tru
-	day: .word 0
-	month: .word 0
-	year: .word 0
-	str: .space 10
-	str1: .space 10
-	str2: .space 10
-	Buffer: .space 50
-	time1: .space 10
-	time2: .space 10
+	day: .word 0 #bien luu ngay (int)
+	month: .word 0 #bien luu thang (int)
+	year: .word 0 #bien luu nam (int)
+	str: .space 3 #chuoi luu ngay
+	str1: .space 3 #chuoi luu thang
+	str2: .space 10	#chuoi luu nam
+	Buffer: .space 50 #bien luu chuoi doc tu file
+	time1: .space 10 #chuoi luu time_1
+	time2: .space 10 #chuoi luu time_2
 .text
 main:
 	#Kiem tra tinh hop le cua time nhap vao
@@ -305,6 +306,9 @@ func09:
 
 	jal func01 #tra ve $v1 = time1
 
+	move $a3,$v1
+	jal ghiFile
+
 #-
 	lw $ra,32($sp)
 	lw $s0,36($sp)
@@ -374,7 +378,7 @@ layTime:
 	addi $sp,$sp,8
 	jr $ra
 	
-chuyenSo:
+chuyenSo: #$a0 la chuoi nhap vao
 	addi $sp,$sp,-32
 	sw $ra,($sp)
 	sw $t0,4($sp)
@@ -390,15 +394,11 @@ chuyenSo:
 	li $s1,0
 	li $s2,10
 	li $s3,0
+
+	jal countStr
+	move $t2,$v0
 	move $t1,$a0
-	
-	countStr:
-	lb $t0,($t1)
-	beqz $t0,chay
-	addi $t1,$t1,1
-	addi $t2,$t2,1 #so luong char
-	j countStr
-	
+
 	chay:
 	beqz $t2,chay.end
 	subi $t1,$t1,1
@@ -414,7 +414,7 @@ chuyenSo:
 	j chay
 
 	chay.end:
-	move $v0,$s3
+	move $v0,$s3 #return $v0 la so duoc chuyen tu chuoi
 
 	lw $ra,($sp)
 	lw $t0,4($sp)
@@ -425,6 +425,56 @@ chuyenSo:
 	lw $s2,24($sp)
 	lw $s3,28($sp)
 	addi $sp,$sp,32
+	jr $ra
+
+ghiFile:
+	addi $sp,$sp,-8
+	sw $s0,($sp)
+	sw $ra,4($sp)
+	#open
+	li $v0,13
+	la $a0,Output
+	li $a1,1           
+	syscall
+	move $s0,$v0
+
+	move $a0,$a3
+	jal countStr
+
+	#write
+	move $a2,$v0
+	li $v0,15
+	move $a0,$s0
+	move $a1,$a3
+	syscall
+
+	li $v0,16
+	move $a0,$s0
+	syscall
+	
+	lw $s0,($sp)
+	lw $ra,4($sp)
+	addi $sp,$sp,8
+	jr $ra
+
+countStr:
+	addi $sp,$sp,-8
+	sw $t0,($sp)
+	sw $t1,4($sp)
+
+	countStr.turn:
+	lb $t0,($a0)
+	beqz $t0,exit
+	addi $a0,$a0,1
+	addi $t1,$t1,1 #so luong char
+	j countStr.turn
+
+	exit:
+	move $v0,$t1
+	lw $t0,($sp)
+	lw $t1,4($sp)
+	addi $sp,$sp,8
+
 	jr $ra
 
 kiemtraTIMEhople:
