@@ -20,7 +20,7 @@
 	line: .asciiz "---------------------------------------------------------\n"
 	luachon: .asciiz "* Lua chon: "
 	ketqua: .asciiz "* Ket qua: "
-	Input: .asciiz "D:/ITUS/KTMT-HN-Project02/input.txt"
+	Input: .asciiz "C:/Users/Chep Phim HD/Documents/MARS_4.0.1/MARS 4.0.1/input.txt"
 	spc: .asciiz " "
 	newline: .asciiz "\n"
 	
@@ -205,14 +205,15 @@ nhapChuoiTIME:
 
 #==== Ham chuc nang 9 =====
 func09:
-	addi $sp,$sp,-20
-	sw $ra,($sp)
-	sw $s0,4($sp)
-	sw $t0,8($sp)
-	sw $t1,12($sp)
-	sw $t2,16($sp)
-	sw $t3,20($sp)
+	addi $sp,$sp,-56
+	sw $ra,32($sp)
+	sw $s0,36($sp)
+	sw $t0,40($sp)
+	sw $t1,44($sp)
+	sw $t2,48($sp)
+	sw $t3,52($sp)
 #than thu tuc
+
 	li $v0,13 #open file
 	la $a0,Input
 	li $a1,0
@@ -270,45 +271,58 @@ func09:
 	addi $t1,$t1,1
 	addi $t3,$t3,1 
 	j layNam
-end1:
-	sb $zero,0($t3)
-	#print buffer
-	la $t1,str
-	j chuyenSo
-	
 
-	li $v0,4
-	la $a0,newline
-	syscall
+	end1:
+	sb $zero,0($t3)
 
 	#close file
 	li $v0,16
 	move $a0,$s0
 	syscall
+	
+	la $a0,str
+	jal chuyenSo
+
+	move $a0,$v0
+	li $v0,1
+	syscall
+
 #-
-	lw $ra,($sp)
-	lw $s0,4($sp)
-	lw $t0,8($sp)
-	lw $t1,12($sp)
-	lw $t2,16($sp)
-	lw $t3,20($sp)
-	addi $sp,$sp,20
+	lw $ra,32($sp)
+	lw $s0,36($sp)
+	lw $t0,40($sp)
+	lw $t1,44($sp)
+	lw $t2,48($sp)
+	lw $t3,56($sp)
+	addi $sp,$sp,60
 	jr $ra
 	
 chuyenSo:
+	addi $sp,$sp,-32
+	sw $ra,($sp)
+	sw $t0,4($sp)
+	sw $t1,8($sp)
+	sw $t2,12($sp)
+	sw $s0,16($sp)
+	sw $s1,20($sp)
+	sw $s2,24($sp)
+	sw $s3,28($sp)
 #than thu tuc
 	li $t2,0	#$t2 = 0
 	li $s0,1
+	li $s1,0
 	li $s2,10
-	li $s3,0	
-countStr:
+	li $s3,0
+	move $t1,$a0
+	
+	countStr:
 	lb $t0,($t1)
 	beqz $t0,chay
 	addi $t1,$t1,1
 	addi $t2,$t2,1 #so luong char
 	j countStr
 	
-chay:
+	chay:
 	beqz $t2,end
 	subi $t1,$t1,1
 	lb $t0,($t1)
@@ -323,9 +337,19 @@ chay:
 	j chay
 
 	end:
-	li $v0,1
-	move $a0,$s3
-	syscall	
+	move $v0,$s3
+
+	lw $ra,($sp)
+	lw $t0,4($sp)
+	lw $t1,8($sp)
+	lw $t2,12($sp)
+	lw $s0,16($sp)
+	lw $s1,20($sp)
+	lw $s2,24($sp)
+	lw $s3,28($sp)
+	addi $sp,$sp,32
+	jr $ra
+
 kiemtraTIMEhople:
 
 
