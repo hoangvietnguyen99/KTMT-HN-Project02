@@ -25,6 +25,19 @@
 	spc: .asciiz " "
 	newline: .asciiz "\n"
 	flash: .asciiz "/"
+	Jan: .asciiz "January"
+	Feb: .asciiz "February"
+	Mar: .asciiz "March"
+	Apr: .asciiz "April"
+	May: .asciiz "May"
+	Jun: .asciiz "June"
+	Jul: .asciiz "July"
+	Aug: .asciiz "August"
+	Sep: .asciiz "September"
+	Oct: .asciiz "October"
+	Nov: .asciiz "November"
+	Dec: .asciiz "December"
+	comma: .asciiz ", "
 	
 	#Cac bien luu tru
 	day: .word 0 #bien luu ngay (int)
@@ -35,10 +48,10 @@
 	str2: .space 10	#chuoi luu nam
 	str3:. space 10 #chuoi luu tam
 	Buffer: .space 50 #bien luu chuoi doc tu file
-	time1: .space 11 #chuoi luu time_1
-	time2: .space 11 #chuoi luu time_2
-	time_1: .space 11 #chuoi luu time_1
-	time_2: .space 11 #chuoi luu time_2
+	time1: .space 50 #chuoi luu time_1
+	time2: .space 50 #chuoi luu time_2
+	time_1: .space 50 #chuoi luu time_1
+	time_2: .space 50 #chuoi luu time_2
 .text
 main:
 	#Kiem tra tinh hop le cua time nhap vao
@@ -387,11 +400,11 @@ strcat_done:
 #Dau thu tuc
 chuyendoiTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
 #khai bao stack
-	addi $sp,$sp,-16
+	addi $sp,$sp,-40
 	#backup thanh ghi
-	sw $ra,4($sp)
-	sw $t0,8($sp)
-	sw $t1,12($sp)
+	sw $ra,32($sp)
+	sw $t0,36($sp)
+	sw $t1,40($sp)
 
 #Than thu tuc
 	
@@ -399,25 +412,123 @@ chuyendoiTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
 	move $t0,$a0
 	
 	#xu ly
-	beq $t0,'A',a
-	j chuyendoi.end
+	beq $t0,'A',A
+	move $a0,$a2
+	jal chuyenSo
+	move $t1,$v0
+	move $a2,$a1
+	la $a0,time1
+	j xuly1
 
-a:
+A:
 	move $t1,$a1
 	move $a1,$a2
 	move $a2,$t1
 	jal xuatTIME
 	j chuyendoi.end
 
-chuyendoi.end:
+xuly1:
+	beq $t0,'B',xuly2
+	jal strcat
+	
+	la $a1,spc
+	jal strcat
+
+	j xuly2
+
+xuly2:	
+	beq $t1,1,jan
+	beq $t1,2,feb
+	beq $t1,3,mar
+	beq $t1,4,apr
+	beq $t1,5,may
+	beq $t1,6,jun
+	beq $t1,7,jul
+	beq $t1,8,aug
+	beq $t1,9,sep
+	beq $t1,10,oct
+	beq $t1,11,nov
+	beq $t1,12,dec
+
+jan:
+	la $a1,Jan
+	jal strcat
+	j xuly3
+feb:
+	la $a1,Feb
+	jal strcat
+	j xuly3
+mar:
+	la $a1,Mar
+	jal strcat
+	j xuly3
+apr:
+	la $a1,Apr
+	jal strcat
+	j xuly3
+may:
+	la $a1,May
+	jal strcat
+	j xuly3
+jun:
+	la $a1,Jun
+	jal strcat
+	j xuly3
+jul:
+	la $a1,Jul
+	jal strcat
+	j xuly3
+aug:
+	la $a1,Aug
+	jal strcat
+	j xuly3
+sep:
+	la $a1,Sep
+	jal strcat
+	j xuly3
+oct:
+	la $a1,Oct
+	jal strcat
+	j xuly3
+nov:
+	la $a1,Nov
+	jal strcat
+	j xuly3
+dec:
+	la $a1,Dec
+	jal strcat
+	j xuly3
+
+xuly3:
+	beq $t0,'C',xuly4
+
+	la $a1,spc
+	jal strcat
+
+	move $a1,$a2
+	jal strcat
+
+	j xuly4
+		
+xuly4:
+	la $a1,comma
+	jal strcat
+
+	move $a1,$a3
+	jal strcat
+	
+	j chuyendoi.end
+
+	chuyendoi.end:
+	la $v1,time1
 #Cuoi thu tuc
 	#Restore thanh ghi
-	lw $ra,4($sp)
-	lw $t0,8($sp)
-	lw $t1,12($sp)
+	lw $ra,32($sp)
+	lw $t0,36($sp)
+	lw $t1,40($sp)
 
 	#xoa stack
-	addi $sp,$sp,16
+	addi $sp,$sp,40
 	#Tra ve
 	jr $ra
 	
@@ -459,10 +570,17 @@ xulyFile:
 	move $a0,$s0
 	syscall
 
-	la $a0,time_2
+	la $a0,time_1
 	jal layTime #$a0 = day, $a1 = month, $a2 = year
 
-	jal xuatTIME #tra ve $v1 = time1
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+	la $a0 'C'
+	
+	#jal xuatTIME	
+	jal chuyendoiTIME
+	
 
 	move $a3,$v1
 	jal ghiFile
@@ -567,12 +685,6 @@ layTime: #$a0 chuoi dau vao
 	layTime.end:
 	sb $zero,0($a1)
 
-	la $a1,str
-
-	la $a2,str1
-	
-	la $a3,str2
-	
 	lw $t0,($sp)
 	lw $t1,4($sp)
 	addi $sp,$sp,8
@@ -715,7 +827,7 @@ chuyenSo: #$a0 la chuoi nhap vao
 	addi $sp,$sp,32
 	jr $ra
 
-ghiFile:
+ghiFile: #tham so dau vao $a3
 	addi $sp,$sp,-8
 	sw $s0,($sp)
 	sw $ra,4($sp)
