@@ -57,7 +57,7 @@ main:
 	
 	console:
 	beq $t0,1,func1
-	#beq $t0,2,func2
+	beq $t0,2,func2
 	#beq $t0,3,func3
 	#beq $t0,4,func4
 	#beq $t0,5,func5
@@ -92,6 +92,85 @@ main:
 	la $a2,str1
 	la $a3,str2
 	jal xuatTIME
+
+	li $v0,4
+	la $a0,ketqua
+	syscall
+	
+	li $v0,4
+	la $a0,time1
+	syscall
+	j ketthuc
+	
+	func2:
+	#nhap
+	jal nhapChuoiTIME
+
+	#xu ly ngay
+	lw $a0,day
+	la $a1,str
+	li $a2,0
+	jal chuyenChu
+
+	#xu ly thang
+	lw $a0,month
+	la $a1,str1
+	li $a2,0
+	jal chuyenChu
+
+	#xu ly nam
+	lw $a0,year
+	la $a1,str2
+	li $a2,1
+	jal chuyenChu
+
+	#Xuat thong bao cac lua chon
+	li $v0,4
+	la $a0,menu2a
+	syscall
+
+	li $v0,4
+	la $a0,menu2b
+	syscall
+
+	li $v0,4
+	la $a0,menu2c
+	syscall
+	
+	func2chon:
+	#Xuat thong bao lua chon
+	li $v0,4
+	la $a0,luachon
+	syscall
+
+	#nhap lua chon
+	li $v0,12
+	syscall
+	
+	move $t0,$v0
+	
+	li $v0,4
+	la $a0,newline
+	syscall
+	
+	beq $t0,'A',runfunc2
+	beq $t0,'B',runfunc2
+	beq $t0,'C',runfunc2
+	j func2chon
+	
+runfunc2:
+
+	#truyen tham so
+	move $a0,$t0 #tham so type
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+
+	jal chuyendoiTIME
+
+	li $v0,4
+	la $a0,ketqua
+	syscall
 	
 	li $v0,4
 	la $a0,time1
@@ -303,6 +382,46 @@ strcat_done:
 	lw $t2,8($sp)
 	addi $sp,$sp,12
     	jr $ra
+
+#===== Ham chuc nang 02a =====
+#Dau thu tuc
+chuyendoiTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
+#khai bao stack
+	addi $sp,$sp,-16
+	#backup thanh ghi
+	sw $ra,4($sp)
+	sw $t0,8($sp)
+	sw $t1,12($sp)
+
+#Than thu tuc
+	
+	#luu lai lua chon
+	move $t0,$a0
+	
+	#xu ly
+	beq $t0,'A',a
+	j chuyendoi.end
+
+a:
+	move $t1,$a1
+	move $a1,$a2
+	move $a2,$t1
+	jal xuatTIME
+	j chuyendoi.end
+
+chuyendoi.end:
+#Cuoi thu tuc
+	#Restore thanh ghi
+	lw $ra,4($sp)
+	lw $t0,8($sp)
+	lw $t1,12($sp)
+
+	#xoa stack
+	addi $sp,$sp,16
+	#Tra ve
+	jr $ra
+	
+#-------------------------
 
 #==== Ham chuc nang 9 =====
 xulyFile:
@@ -647,8 +766,6 @@ countStr: #tham so $a0
 	jr $ra
 
 kiemtraTIMEhople:
-
-chuyendoiTIME:
 
 kiemtraNamNhuan:
 
