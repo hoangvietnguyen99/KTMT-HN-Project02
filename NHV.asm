@@ -26,6 +26,20 @@
 	newline: .asciiz "\n"
 	flash: .asciiz "/"
 	
+	#Nhung dong thong bao khac:
+	Month1: .asciiz "January"
+	Month2: .asciiz "February"
+	Month3: .asciiz "March"
+	Month4: .asciiz "April"
+	Month5: .asciiz "May"
+	Month6: .asciiz "June"
+	Month7: .asciiz "July"
+	Month8: .asciiz "August"
+	Month9: .asciiz "September"
+	Month10: .asciiz "October"
+	Month11: .asciiz "November"
+	Month12: .asciiz "December"
+	
 	#Cac bien luu tru
 	day: .word 0 #bien luu ngay (int)
 	month: .word 0 #bien luu thang (int)
@@ -767,7 +781,31 @@ countStr: #tham so $a0
 
 kiemtraTIMEhople:
 
+# Ham kiem tra nam nhuan: $v0 tra ve 1 la nam nhuan, 0 la nam khong nhuan
 kiemtraNamNhuan:
+	lw $t0, year	# luu year vao $t0
+
+	addi $t1, $zero, 400
+	div $t0, $t1
+	mfhi $t2	# $t2 = year % 400
+	beq $t2, $zero, kiemtraNamNhuan.dung	# nam nhuan chia het cho 400
+
+	addi $t1, $zero, 4
+	div $t0, $t1
+	mfhi $t2 	# $t2 = year % 4
+	bne $t2, $zero, kiemtraNamNhuan.sai	# neu khong chia het cho 4 khong phai nam nhuan
+
+	addi $t1, $zero, 100
+	div $t0, $t1
+	mfhi $t2 	# $t2 = year % 100
+	beq $t2, $zero, kiemtraNamNhuan.thoat	# neu chia het cho 4 va 100 
+kiemtraNamNhuan.dung:
+	addi $v0, $zero, 1	# $v0 tra ve 1 la nam nhuan
+	j kiemtraNamNhuan.thoat
+kiemtraNamNhuan.sai:
+	add $v0, $zero, 0	# $v0 tra ve 0 la nam khnong nhuan
+kiemtraNamNhuan.thoat:
+	jr $ra
 
 NgayThuMaytrongTuan:
 
