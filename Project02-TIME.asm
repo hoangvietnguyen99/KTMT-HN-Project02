@@ -1312,15 +1312,18 @@ NgayThuMayketuNgayDauTien:
 	sub $a2, $a2, 1	# tru nam cho 1 de biet so nam da qua
 	
 	# tinh so nam nhuan da qua bang cach (nam / 4) - (nam / 100) + (nam / 400)
-	div $a2, 4
+	addi $s0, $zero, 4
+	div $a2, $s0
 	mflo $t1
 	addi $t0,$t1,0
 	
-	div $a2, 100
+	addi $s0, $zero, 100
+	div $a2, $s0
 	mflo $t1
 	sub $t0,$t0,$t1
 	
-	div $a2, 400
+	addi $s0, $zero, 400
+	div $a2, $s0
 	mflo $t1
 	addi $t0,$t1,0
 	
