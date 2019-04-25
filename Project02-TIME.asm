@@ -1359,6 +1359,11 @@ NgayThuMayketuNgayDauTien:
 	cong30:
 		addi $t0,$t0,30
 	congThang2:
+		lw $a0,year
+		li $a1,1
+		jal kiemtraNamNhuan
+		#luu lai ket qua trong $v0
+		
 		
 
 KhoangThoiGiangiuaHaiChuoiTIME:
