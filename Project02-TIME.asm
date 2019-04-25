@@ -33,6 +33,7 @@
 	str: .space 3 #chuoi luu ngay
 	str1: .space 3 #chuoi luu thang
 	str2: .space 10	#chuoi luu nam
+	str3:. space 10 #chuoi luu tam
 	Buffer: .space 50 #bien luu chuoi doc tu file
 	time1: .space 11 #chuoi luu time_1
 	time2: .space 11 #chuoi luu time_2
@@ -65,6 +66,37 @@ main:
 	#beq $t0,8,func8
 	func1:
 	jal nhapChuoiTIME
+	j func1.run
+	
+	#xu ly ngay thang nam sang chuoi
+	func1.run:
+	#xu ly ngay
+	lw $a0,day
+	la $a1,str
+	li $a2,0
+	jal chuyenChu
+
+	#xu ly thang
+	lw $a0,month
+	la $a1,str1
+	li $a2,0
+	jal chuyenChu
+
+	#xu ly nam
+	lw $a0,year
+	la $a1,str2
+	li $a2,1
+	jal chuyenChu
+	
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+	jal xuatTIME
+	
+	li $v0,4
+	la $a0,time1
+	syscall
+	j ketthuc
 	
 	func9:
 	jal xulyFile
@@ -211,7 +243,7 @@ nhapChuoiTIME:
 
 #===== Ham chuc nang 01 =====
 #Dau thu tuc
-xuatTIME:
+xuatTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
 #khai bao stack
 	addi $sp,$sp,-4
 	#backup thanh ghi
@@ -234,7 +266,7 @@ xuatTIME:
 	move $a1,$a3
 	jal strcat
 
-	la $v1,time1
+	la $v1,time1 #tra ve $v1 = time1
 
 #Cuoi thu tuc
 	#Restore thanh ghi
@@ -360,8 +392,9 @@ strcopy.turn:
 	addi $a0,$a0,1	
 	addi $a1,$a1,1	
 	addi $t1,$t1,1	
-	bne $t1,$a2,strcopy.turn	
+	bne $t1,$a2,strcopy.turn
 	
+	sb $zero,0($a1)
 	lw $t0,($sp)
 	lw $t1,4($sp)
 	addi $sp,$sp,8
@@ -426,7 +459,93 @@ layTime: #$a0 chuoi dau vao
 	addi $sp,$sp,8
 	jr $ra
 
-chuyenChu:
+chuyenChu: #tham so dau vao $a0 la so, $a1 la chuoi tra ve
+	#$a2 = 0 la DD/MM, $a2 = 1 la YYYY
+	addi $sp,$sp,-28
+	sw $s0,($sp)
+	sw $s1,4($sp)
+	sw $s2,8($sp)
+	sw $t0,12($sp)
+	sw $t1,16($sp)
+	sw $t2,20($sp)
+	sw $ra,24($sp)
+	li $s0,10
+	li $t0,0
+	move $s1,$a0
+	move $t1,$a1
+
+	#chuyen doi so sang chu => chuoi nguoc
+	run:
+	beqz $s1,run.end
+	div $s1,$s0
+	mfhi $s2
+	mflo $s1
+	addi $s2,$s2,48
+	sb $s2,0($t1)
+	addi $t1,$t1,1
+	addi $t0,$t0,1
+	j run
+
+	run.end:
+	la $t2 '0'
+	#xu ly them so 0
+	beqz $a2,fillDM.run
+	beq $a2,1,fillY.run
+
+	fillDM.run:
+	beq $t0,2,reverse
+	sb $t2,0($t1)
+	addi $t1,$t1,1
+	addi $t0,$t0,1
+	j fillDM.run
+
+	fillY.run:
+	beq $t0,4,reverse
+	sb $t2,0($t1)
+	addi $t1,$t1,1
+	addi $t0,$t0,1
+	j fillY.run
+
+	reverse:
+	#dao chieu chuoi
+	la $a0,str3
+	subi $t1,$t1,1
+	move $a2,$t0
+
+	reverse.run:
+	lb $t2,0($t1)
+	beqz $t0,reverse.end
+	sb $t2,0($a0)
+	addi $a0,$a0,1
+	subi $t1,$t1,1
+	subi $t0,$t0,1
+	j reverse.run
+
+	reverse.end:
+	sb $zero,0($a0)
+	subi $a0,$a0,1
+	move $t0,$a2
+
+	continue:
+	subi $a0,$a0,1
+	subi $t0,$t0,1
+	bnez $t0,continue
+
+	move $a1,$t1
+	li $a3,0
+	addi $a2,$a2,1
+	jal strcopy
+	move $v0,$a1 #return $v0 la chuoi duoc chuyen tu so	
+
+	lw $s0,($sp)
+	lw $s1,4($sp)
+	lw $s2,8($sp)
+	lw $t0,12($sp)
+	lw $t1,16($sp)
+	lw $t2,20($sp)
+	lw $ra,24($sp)
+	addi $sp,$sp,28
+	jr $ra
 	
 chuyenSo: #$a0 la chuoi nhap vao
 	addi $sp,$sp,-32
@@ -507,7 +626,7 @@ ghiFile:
 	addi $sp,$sp,8
 	jr $ra
 
-countStr:
+countStr: #tham so $a0
 	addi $sp,$sp,-8
 	sw $t0,($sp)
 	sw $t1,4($sp)
@@ -520,7 +639,7 @@ countStr:
 	j countStr.turn
 
 	exit:
-	move $v0,$t1
+	move $v0,$t1 #tra ve $v0 la so luong char
 	lw $t0,($sp)
 	lw $t1,4($sp)
 	addi $sp,$sp,8
