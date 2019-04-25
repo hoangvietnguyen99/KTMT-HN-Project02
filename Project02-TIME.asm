@@ -81,6 +81,13 @@
 	mess5b: .asciiz " den ngay "
 	mess5c: .asciiz " la "
 	mess5d: .asciiz " ngay"
+	Chunhat: .asciiz "Chu nhat"
+	Thu2: .asciiz "Thu hai"
+	Thu3: .asciiz "Thu ba"
+	Thu4: .asciiz "Thu tu"
+	Thu5: .asciiz "Thu nam"
+	Thu6: .asciiz "Thu sau"
+	Thu7: .asciiz "Thu bay"
 
 	#Cac bien luu tru
 	day: .word 0 #bien luu ngay (int)
