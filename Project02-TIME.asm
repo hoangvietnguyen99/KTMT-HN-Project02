@@ -1301,9 +1301,65 @@ kiemtraTIMEhople:
 
 NgayThuMaytrongTuan:
 
+# ham tinh ngay ke tu 1/1/1 tra ve ket qua so ngay trong $v1
 NgayThuMayketuNgayDauTien:
 
-
+	lw $a0, day
+	lw $a1, month
+	lw $a2, year
+	
+	addi $t0, $zero, 0	# luu ket qua
+	sub $a2, $a2, 1	# tru nam cho 1 de biet so nam da qua
+	
+	# tinh so nam nhuan da qua bang cach (nam / 4) - (nam / 100) + (nam / 400)
+	div $a2, 4
+	mflo $t1
+	addi $t0,$t1,0
+	
+	div $a2, 100
+	mflo $t1
+	sub $t0,$t0,$t1
+	
+	div $a2, 400
+	mflo $t1
+	addi $t0,$t1,0
+	
+	sub $t1,$a2,$t0 # so nam khong nhuan
+	
+	mul $t0,$t0,366	# so nam nhuan nhan cho 366 ngay
+	
+	mul $t1,$t1,365
+	
+	add $t0,$t0,$t1
+	
+	# cong thang du
+	
+	bgt $a1,1,cong31
+	bgt $a1,2,congThang2
+	bgt $a1,3,cong31
+	bgt $a1,4,cong30
+	bgt $a1,5,cong31
+	bgt $a1,6,cong30
+	bgt $a1,7,cong31
+	bgt $a1,8,cong31
+	bgt $a1,9,cong30
+	bgt $a1,10,cong31
+	bgt $a1,11,cong30
+	bgt $a1,12,cong31
+	
+	# cong ngay du
+	add $t0,$t0,$a0
+	
+	move $v1,$t0
+	
+	jr $ra
+	
+	cong31:
+		addi $t0,$t0,31
+	cong30:
+		addi $t0,$t0,30
+	congThang2:
+		
 
 KhoangThoiGiangiuaHaiChuoiTIME:
 
