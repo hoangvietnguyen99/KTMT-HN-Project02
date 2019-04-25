@@ -38,7 +38,42 @@
 	Nov: .asciiz "November"
 	Dec: .asciiz "December"
 	comma: .asciiz ", "
-	
+	header1: .asciiz "1."
+	header2a: .asciiz "\n2A."
+	header2b: .asciiz "\n2B."
+	header2c: .asciiz "\n2C."
+	header3: .asciiz "\n3."
+	header4: .asciiz "\n4."
+	header5: .asciiz "\n5."
+	header6: .asciiz "\n6."
+	header7: .asciiz "\n7."
+	header8: .asciiz "\n8."
+	NamThuong: .asciiz " La Nam Thuong"
+	NamNhuan: .asciiz " La Nam Nhuan"
+	can1: .asciiz "Giap"
+	can2: .asciiz "At"
+	can3: .asciiz "Binh"
+	can4: .asciiz "Dinh"
+	can5: .asciiz "Mau"
+	can6: .asciiz "Ky"
+	can7: .asciiz "Canh"
+	can8: .asciiz "Tan"
+	can9: .asciiz "Nham"
+	can10: .asciiz "Quy"
+	chi1: .asciiz " Ty"
+	chi2: .asciiz " Suu"
+	chi3: .asciiz " Dan"
+	chi4: .asciiz " Meo"
+	chi5: .asciiz " Thin"
+	chi6: .asciiz " Ty"
+	chi7: .asciiz " Ngo"
+	chi8: .asciiz " Mui"
+	chi9: .asciiz " Than"
+	chi10: .asciiz " Dau"
+	chi11: .asciiz " Tat"
+	chi12: .asciiz " Hoi"
+	mess6: .asciiz " la nam "
+
 	#Cac bien luu tru
 	day: .word 0 #bien luu ngay (int)
 	month: .word 0 #bien luu thang (int)
@@ -46,12 +81,13 @@
 	str: .space 3 #chuoi luu ngay
 	str1: .space 3 #chuoi luu thang
 	str2: .space 10	#chuoi luu nam
-	str3:. space 10 #chuoi luu tam
+	str3: .space 10 #chuoi luu tam
 	Buffer: .space 50 #bien luu chuoi doc tu file
 	time1: .space 50 #chuoi luu time_1
 	time2: .space 50 #chuoi luu time_2
 	time_1: .space 50 #chuoi luu time_1
 	time_2: .space 50 #chuoi luu time_2
+	CanChi :.space 50 #chuoi luu can chi
 .text
 main:
 	#Kiem tra tinh hop le cua time nhap vao
@@ -69,20 +105,8 @@ main:
 	beqz $t0,ketthuc
 	
 	console:
-	beq $t0,1,func1
-	beq $t0,2,func2
-	#beq $t0,3,func3
-	#beq $t0,4,func4
-	#beq $t0,5,func5
-	#beq $t0,6,func6
-	#beq $t0,7,func7
-	#beq $t0,8,func8
-	func1:
 	jal nhapChuoiTIME
-	j func1.run
-	
-	#xu ly ngay thang nam sang chuoi
-	func1.run:
+
 	#xu ly ngay
 	lw $a0,day
 	la $a1,str
@@ -100,7 +124,16 @@ main:
 	la $a1,str2
 	li $a2,1
 	jal chuyenChu
-	
+
+	beq $t0,1,func1
+	beq $t0,2,func2
+	beq $t0,3,func3
+	#beq $t0,4,func4
+	#beq $t0,5,func5
+	beq $t0,6,func6
+	#beq $t0,7,func7
+	#beq $t0,8,func8
+func1:
 	la $a1,str
 	la $a2,str1
 	la $a3,str2
@@ -111,32 +144,11 @@ main:
 	syscall
 	
 	li $v0,4
-	la $a0,time1
+	move $a0,$v1
 	syscall
 	j ketthuc
 	
-	func2:
-	#nhap
-	jal nhapChuoiTIME
-
-	#xu ly ngay
-	lw $a0,day
-	la $a1,str
-	li $a2,0
-	jal chuyenChu
-
-	#xu ly thang
-	lw $a0,month
-	la $a1,str1
-	li $a2,0
-	jal chuyenChu
-
-	#xu ly nam
-	lw $a0,year
-	la $a1,str2
-	li $a2,1
-	jal chuyenChu
-
+func2:
 	#Xuat thong bao cac lua chon
 	li $v0,4
 	la $a0,menu2a
@@ -171,7 +183,7 @@ main:
 	beq $t0,'C',runfunc2
 	j func2chon
 	
-runfunc2:
+	runfunc2:
 
 	#truyen tham so
 	move $a0,$t0 #tham so type
@@ -186,11 +198,41 @@ runfunc2:
 	syscall
 	
 	li $v0,4
-	la $a0,time1
+	move $a0,$v1
+	syscall
+	j ketthuc
+
+func3:
+	la $a0,str2
+	jal kiemtraNamNhuan
+	move $a0,$v0
+	beqz $a0,nThuong
+	j nNhuan
+
+	nThuong:
+	li $v0,4
+	la $a0,NamThuong
+	syscall
+
+	nNhuan:
+	li $v0,4
+	la $a0,NamNhuan
+	syscall
+	j func3.end
+
+	func3.end:
+	j ketthuc
+
+func6:
+	la $a0,str2
+	jal CanChicuaNam
+
+	li $v0,4
+	move $a0,$v1
 	syscall
 	j ketthuc
 	
-	func9:
+func9:
 	jal xulyFile
 	j ketthuc
 	
@@ -372,7 +414,7 @@ xuatTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
 #-------------------------
 
 #==== Ham ghep chuoi =====
-strcat: #tham so dau vao $a0, $a1
+strcat: #tham so dau vao $a0 chuoi dich, $a1 chuoi nguon
 	addi $sp,$sp,-12
 	sw $t0,($sp)
 	sw $t1,4($sp)
@@ -396,7 +438,7 @@ strcat_done:
 	addi $sp,$sp,12
     	jr $ra
 
-#===== Ham chuc nang 02a =====
+#===== Ham chuc nang 02 =====
 #Dau thu tuc
 chuyendoiTIME: #tham so $a1 = day(2), $a2 = month(2), $a3 = year(4)
 #khai bao stack
@@ -534,65 +576,472 @@ xuly4:
 	
 #-------------------------
 
+#==== Ham chuc nang 03 =====
+# Ham kiem tra nam nhuan: $v0 tra ve 1 la nam nhuan, 0 la nam khong nhuan
+kiemtraNamNhuan:
+	addi $sp,$sp,-16
+	sw $ra,0($sp)
+	sw $t0,4($sp)
+	sw $t1,8($sp)
+	sw $t2,12($sp)
+	
+	jal chuyenSo
+	move $t0,$v0
+
+	addi $t1, $zero, 400
+	div $t0, $t1
+	mfhi $t2	# $t2 = year % 400
+	beq $t2, $zero, kiemtraNamNhuan.dung	# nam nhuan chia het cho 400
+
+	addi $t1, $zero, 4
+	div $t0, $t1
+	mfhi $t2 	# $t2 = year % 4
+	bne $t2, $zero, kiemtraNamNhuan.sai	# neu khong chia het cho 4 khong phai nam nhuan
+
+	addi $t1, $zero, 100
+	div $t0, $t1
+	mfhi $t2 	# $t2 = year % 100
+	beq $t2, $zero, kiemtraNamNhuan.thoat	# neu chia het cho 4 va 100 
+kiemtraNamNhuan.dung:
+	addi $v0, $zero, 1	# $v0 tra ve 1 la nam nhuan
+	j kiemtraNamNhuan.thoat
+kiemtraNamNhuan.sai:
+	add $v0, $zero, 0	# $v0 tra ve 0 la nam khnong nhuan
+kiemtraNamNhuan.thoat:
+	lw $ra,0($sp)
+	lw $t0,4($sp)
+	lw $t1,8($sp)
+	lw $t2,12($sp)
+	addi $sp,$sp,16
+	jr $ra
+
+#--------------------------
+
+#==== Ham chuc nang 6 =====
+CanChicuaNam:
+	addi $sp,$sp,-4
+	sw $ra,0($sp)
+	
+	jal chuyenSo
+	move $s0,$v0
+
+	li $s1,10
+	
+	addi $s0,$s0,6 # year + 6
+	div $s0,$s1
+	mfhi $s2 # (year + 6) %10
+
+	la $a0,CanChi
+	beq $s2,0,giap
+	beq $s2,1,at
+	beq $s2,2,binh
+	beq $s2,3,dinh
+	beq $s2,4,mau
+	beq $s2,5,ky
+	beq $s2,6,canh
+	beq $s2,7,tan
+	beq $s2,8,nham
+	beq $s2,9,quy
+	giap:
+	la $a1,can1
+	jal strcat
+	j Can.end
+	
+	at:
+	la $a1,can2
+	jal strcat
+	j Can.end
+	
+	binh:
+	la $a1,can3
+	jal strcat
+	j Can.end
+
+	dinh:
+	la $a1,can4
+	jal strcat
+	j Can.end
+
+	mau:
+	la $a1,can5
+	jal strcat
+	j Can.end
+
+	ky:
+	la $a1,can6
+	jal strcat
+	j Can.end
+
+	canh:
+	la $a1,can7
+	jal strcat
+	j Can.end
+
+	tan:
+	la $a1,can8
+	jal strcat
+	j Can.end
+
+	nham:
+	la $a1,can9
+	jal strcat
+	j Can.end
+
+	quy:
+	la $a1,can10
+	jal strcat
+	j Can.end
+	
+	Can.end:
+	move $s0,$v0
+	li $s1,12
+	
+	addi $s0,$s0,8 # year + 8
+	div $s0,$s1
+	mfhi $s2 # (year + 8) %12
+
+	beq $s2,0,Chi1
+	beq $s2,1,Chi2
+	beq $s2,2,Chi3
+	beq $s2,3,Chi4
+	beq $s2,4,Chi5
+	beq $s2,5,Chi6
+	beq $s2,6,Chi7
+	beq $s2,7,Chi8
+	beq $s2,8,Chi9
+	beq $s2,9,Chi10
+	beq $s2,10,Chi11
+	beq $s2,11,Chi12
+	
+	Chi1:
+	la $a1,chi1
+	jal strcat
+	j Chi.end
+
+	Chi2:
+	la $a1,chi2
+	jal strcat
+	j Chi.end
+	
+	Chi3:
+	la $a1,chi3
+	jal strcat
+	j Chi.end
+
+	Chi4:
+	la $a1,chi4
+	jal strcat
+	j Chi.end
+
+	Chi5:
+	la $a1,chi5
+	jal strcat
+	j Chi.end
+
+	Chi6:
+	la $a1,chi6
+	jal strcat
+	j Chi.end
+
+	Chi7:
+	la $a1,chi7
+	jal strcat
+	j Chi.end
+
+	Chi8:
+	la $a1,chi8
+	jal strcat
+	j Chi.end
+
+	Chi9:
+	la $a1,chi9
+	jal strcat
+	j Chi.end
+
+	Chi10:
+	la $a1,chi10
+	jal strcat
+	j Chi.end
+
+	Chi11:
+	la $a1,chi11
+	jal strcat
+	j Chi.end
+
+	Chi12:
+	la $a1,chi12
+	jal strcat
+	j Chi.end
+
+	Chi.end:
+	la $v1,CanChi #tra ve $v1
+	
+	lw $ra,($sp)
+	addi $sp,$sp,4
+	jr $ra
+
+#--------------------------
+
 #==== Ham chuc nang 9 =====
 xulyFile:
-	addi $sp,$sp,-56
-	sw $ra,32($sp)
-	sw $s0,36($sp)
-	sw $t0,40($sp)
-	sw $t1,44($sp)
-	sw $t2,48($sp)
-	sw $t3,52($sp)
+	addi $sp,$sp,-68
+	sw $ra,44($sp)
+	sw $s7,48($sp)
+	sw $t0,52($sp)
+	sw $t1,56($sp)
+	sw $t2,60($sp)
+	sw $t3,64($sp)
 #than thu tuc
 
-	li $v0,13 #open file
+	#open file
+	li $v0,13 
 	la $a0,Input
 	li $a1,0
 	syscall
-	move $s0,$v0
+	move $s7,$v0
 	
 	#read
 	li $v0,14
-	move $a0,$s0
+	move $a0,$s7
 	la $a1,Buffer
 	la $a2,50
 	syscall
 	
+	#tien hanh tach chuoi
 	la $t0,Buffer
 
 	move $a0,$t0
-	la $a1,time_1
-	la $a2,time_2
+	la $a1,time_1 ## chuoi TIME_1
+	la $a2,time_2 ## chuoi TIME_2
 	jal tach
 	
 	#close file
 	li $v0,16
-	move $a0,$s0
+	move $a0,$s7
 	syscall
 
+#---------
+
+	#open file de ghi
+	li $v0,13 
+	la $a0,Output
+	li $a1,1
+	syscall
+	move $s7,$v0 #luu lai descriptor tra ve trong $v0	
+
 	la $a0,time_1
-	jal layTime #$a0 = day, $a1 = month, $a2 = year
+	jal layTime
+	
+	la $a0,header1
+	jal countStr
+	move $a2,$v0
+	
+	#write 1
+	move $a0,$s7
+	li $v0,15
+	la $a1,header1
+	syscall
 
 	la $a1,str
 	la $a2,str1
 	la $a3,str2
-	la $a0 'C'
 	
-	#jal xuatTIME	
+	jal xuatTIME
+
+	move $a0,$v1
+	jal countStr
+	move $a2,$v0
+
+	#write 2
+	move $a0,$s7
+	li $v0,15
+	move $a1,$v1
+	syscall
+
+	la $a0,header2a
+	jal countStr
+	move $a2,$v0
+
+	#write 4
+	move $a0,$s7
+	li $v0,15
+	la $a1,header2a
+	syscall
+
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+	la $a0,'A'
 	jal chuyendoiTIME
+
+	move $a0,$v1
+	jal countStr
+	move $a2,$v0
+
+	#write 5
+	move $a0,$s7
+	li $v0,15
+	move $a1,$v1
+	syscall
+	
+	la $a0,header2b
+	jal countStr
+	move $a2,$v0
+
+	#write 6
+	move $a0,$s7
+	li $v0,15
+	la $a1,header2b
+	syscall
+
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+	la $a0,'B'
+	jal chuyendoiTIME
+
+	move $a0,$v1
+	jal countStr
+	move $a2,$v0
+
+	#write 7
+	move $a0,$s7
+	li $v0,15
+	move $a1,$v1
+	syscall
+
+	la $a0,header2c
+	jal countStr
+	move $a2,$v0
+
+	#write 8
+	move $a0,$s7
+	li $v0,15
+	la $a1,header2c
+	syscall
+
+	la $a1,str
+	la $a2,str1
+	la $a3,str2
+	la $a0,'C'
+	jal chuyendoiTIME
+
+	move $a0,$v1
+	jal countStr
+	move $a2,$v0
+
+	#write 9
+	move $a0,$s7
+	li $v0,15
+	move $a1,$v1
+	syscall
+
+	la $a0,header3
+	jal countStr
+	move $a2,$v0
+	
+	#write 10
+	move $a0,$s7
+	li $v0,15
+	la $a1,header3
+	syscall
+
+	la $a0,str2
+	jal countStr
+	move $a2,$v0
+
+	#write 11
+	move $a0,$s7
+	li $v0,15
+	la $a1,str2
+	syscall
+
+	la $a0,str2
+	jal kiemtraNamNhuan
+	beqz $v0,laNamThuong
+	j laNamNhuan
+
+	laNamThuong:
+	la $a0,NamThuong
+	jal countStr
+	move $a2,$v0
+
+	#write 12
+	move $a0,$s7
+	li $v0,15
+	la $a1,NamThuong
+	syscall
+	j  write.cont
+
+	laNamNhuan:
+	la $a0,NamNhuan
+	jal countStr
+	move $a2,$v0
+	
+	#write 13
+	move $a0,$s7
+	li $v0,15
+	la $a1,NamNhuan
+	syscall
+	j  write.cont
+
+	write.cont:
+	la $a0,header6
+	jal countStr
+	move $a2,$v0
+	
+	#write header 6
+	move $a0,$s7
+	li $v0,15
+	la $a1,header6
+	syscall
+
+	la $a0,str2
+	jal countStr
+	move $a2,$v0
+	
+	move $a0,$s7
+	li $v0,15
+	la $a1,str2
+	syscall
+
+	la $a0,mess6
+	jal countStr
+	move $a2,$v0
+	
+	move $a0,$s7
+	li $v0,15
+	la $a1,mess6
+	syscall
+
+	#In ket qua chuc nang 6
+	la $a0,str2
+	jal CanChicuaNam
+	move $a0,$v1
+
+	jal countStr
+	move $a2,$v0
+	
+	move $a0,$s7
+	li $v0,15
+	move $a1,$v1
+	syscall
 	
 
-	move $a3,$v1
-	jal ghiFile
+	#close file
+	li $v0,16
+	move $a0,$s7
+	syscall
 
-#-
-	lw $ra,32($sp)
-	lw $s0,36($sp)
-	lw $t0,40($sp)
-	lw $t1,44($sp)
-	lw $t2,48($sp)
-	lw $t3,56($sp)
-	addi $sp,$sp,60
+#---------
+
+	lw $ra,44($sp)
+	lw $s7,48($sp)
+	lw $t0,52($sp)
+	lw $t1,56($sp)
+	lw $t2,60($sp)
+	lw $t3,64($sp)
+	addi $sp,$sp,68
 	jr $ra
 
 tach: #$a0 = chuoi can tach, $a1 = time_1, $a2 = time_2
@@ -691,7 +1140,7 @@ layTime: #$a0 chuoi dau vao
 	jr $ra
 
 chuyenChu: #tham so dau vao $a0 la so, $a1 la chuoi tra ve
-	#$a2 = 0 la DD/MM, $a2 = 1 la YYYY
+	#$a2 = 0 la DD/MM, $a2 = 1 la YYYY, $a2 khac la loai khac
 	addi $sp,$sp,-28
 	sw $s0,($sp)
 	sw $s1,4($sp)
@@ -720,8 +1169,9 @@ chuyenChu: #tham so dau vao $a0 la so, $a1 la chuoi tra ve
 	run.end:
 	la $t2 '0'
 	#xu ly them so 0
-	beqz $a2,fillDM.run
-	beq $a2,1,fillY.run
+	beqz $a2,fillDM.run #TH la ngay hoac thang
+	beq $a2,1,fillY.run #TH la nam
+	j reverse #TH khac
 
 	fillDM.run:
 	beq $t0,2,reverse
@@ -827,36 +1277,6 @@ chuyenSo: #$a0 la chuoi nhap vao
 	addi $sp,$sp,32
 	jr $ra
 
-ghiFile: #tham so dau vao $a3
-	addi $sp,$sp,-8
-	sw $s0,($sp)
-	sw $ra,4($sp)
-	#open
-	li $v0,13
-	la $a0,Output
-	li $a1,1           
-	syscall
-	move $s0,$v0
-
-	move $a0,$a3
-	jal countStr
-
-	#write
-	move $a2,$v0
-	li $v0,15
-	move $a0,$s0
-	move $a1,$a3
-	syscall
-
-	li $v0,16
-	move $a0,$s0
-	syscall
-	
-	lw $s0,($sp)
-	lw $ra,4($sp)
-	addi $sp,$sp,8
-	jr $ra
-
 countStr: #tham so $a0
 	addi $sp,$sp,-8
 	sw $t0,($sp)
@@ -879,37 +1299,11 @@ countStr: #tham so $a0
 
 kiemtraTIMEhople:
 
-# Ham kiem tra nam nhuan: $v0 tra ve 1 la nam nhuan, 0 la nam khong nhuan
-kiemtraNamNhuan:
-	lw $t0, year	# luu year vao $t0
-
-	addi $t1, $zero, 400
-	div $t0, $t1
-	mfhi $t2	# $t2 = year % 400
-	beq $t2, $zero, kiemtraNamNhuan.dung	# nam nhuan chia het cho 400
-
-	addi $t1, $zero, 4
-	div $t0, $t1
-	mfhi $t2 	# $t2 = year % 4
-	bne $t2, $zero, kiemtraNamNhuan.sai	# neu khong chia het cho 4 khong phai nam nhuan
-
-	addi $t1, $zero, 100
-	div $t0, $t1
-	mfhi $t2 	# $t2 = year % 100
-	beq $t2, $zero, kiemtraNamNhuan.thoat	# neu chia het cho 4 va 100 
-kiemtraNamNhuan.dung:
-	addi $v0, $zero, 1	# $v0 tra ve 1 la nam nhuan
-	j kiemtraNamNhuan.thoat
-kiemtraNamNhuan.sai:
-	add $v0, $zero, 0	# $v0 tra ve 0 la nam khnong nhuan
-kiemtraNamNhuan.thoat:
-	jr $ra
-
 NgayThuMaytrongTuan:
 
 NgayThuMayketuNgayDauTien:
 
-CanChicuaNam:
+
 
 KhoangThoiGiangiuaHaiChuoiTIME:
 
